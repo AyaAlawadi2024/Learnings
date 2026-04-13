@@ -52,7 +52,7 @@ Create a new solution in the "src" folder in the repository via Visual studio
 In case of a web api
 Use an existing repository to add the folder called "src/ScriptAndSpecifications" in the src folder as well. Remove all other files than these below and rename them to match your reposistory/api.
 NAME.spec.api.v1.yaml
-generate-NAME-context.ps1
+generate-NAME-api.ps1
 
 Open these files in VS code and edit the sections where your project name differs from the existing fx. in the .yaml file rewrite info.title, info.description, tags.name . Paths/Models etc. should be cleaned out, since those should be re-done for a new API (A helpful tool to edit in paths/model section is called Stoplight.io ).
 
