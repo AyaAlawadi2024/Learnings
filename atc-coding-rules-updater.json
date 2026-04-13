@@ -1,0 +1,8 @@
+{
+  "projectTarget": "DotNet10",
+  "mappings": {
+    "sample": { "paths": [ "sample" ] },
+    "src": { "paths": [ "src" ] },
+    "test": { "paths": [ "test" ] }
+  }
+}

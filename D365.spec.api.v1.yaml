@@ -1,0 +1,188 @@
+openapi: 3.0.1
+info:
+  title: KL D365 API
+  description: KL D365 API
+  version: v1
+  contact:
+    name: Delegate
+  license:
+    name: MIT
+servers:
+  - url: /api/v1
+    description: Api version 1.0
+x-authorize-roles:
+  - api.execute.all
+tags:
+  - name: kl-iot-d365
+    description: ''
+paths:
+  /accounts:
+    x-authorize-roles:
+      - api.execute.all
+    get:
+      summary: Get accounts
+      description: Get accounts
+      operationId: getAccounts
+      x-return-async-enumerable: true
+      parameters:
+        - $ref: '#/components/parameters/filter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+  /command/resend-events:
+    x-authorize-roles:
+      - api.execute.all
+    post:
+      summary: Resend resource events directly to Event Hubs
+      description: Resend resource events directly to Event Hubs
+      operationId: resendResourceEvents
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendEventsRequest'
+      responses:
+        '200':
+          description: Events resent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResendEventsResponse'
+        '400':
+          description: Bad request
+components:
+  schemas:
+    Account:
+      title: Account
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        crmId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        slaId:
+          type: string
+          format: uuid
+          nullable: true
+        billingAccount:
+          nullable: true
+          oneOf:
+              - $ref: '#/components/schemas/IdName'
+        overallCustomer:
+          nullable: true
+          oneOf:
+              - $ref: '#/components/schemas/IdName'
+        parentAccount:
+          nullable: true
+          oneOf:
+              - $ref: '#/components/schemas/IdName'
+        reportingGroup:
+          nullable: true
+          oneOf:
+              - $ref: '#/components/schemas/IdName'
+    Address:
+      title: Account
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+          nullable: true
+        line3:
+          type: string
+          nullable: true
+        postalCode:
+          type: string
+        cityName:
+          type: string
+        countryName:
+          type: string
+        coordinate:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/CartesianCoordinate'
+    CartesianCoordinate:
+      title: CartesianCoordinate
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+    IdName:
+      title: Id-Name
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    ResendEventsRequest:
+      title: ResendEventsRequest
+      type: object
+      required:
+        - resourceType
+      properties:
+        resourceType:
+          type: string
+          enum:
+            - Account
+            - Device
+            - DeviceSetting
+            - TelemetryConfiguration
+        ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          nullable: true
+          description: Optional. If empty or null, resends all records of the specified resource type.
+    ResendEventsResponse:
+      title: ResendEventsResponse
+      type: object
+      properties:
+        resourceType:
+          type: string
+        processedCount:
+          type: integer
+          format: int32
+        message:
+          type: string
+        ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        notFoundIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          nullable: true
+          description: IDs that were requested but not found in the database
+  requestBodies: {}
+  responses: {}
+  parameters:
+    filter:
+      name: filter
+      in: query
+      required: false
+      schema:
+        type: string
