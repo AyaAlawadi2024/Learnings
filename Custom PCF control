@@ -1,0 +1,41 @@
+How to create a custom component in Dynamics:
+To initialize your custom pcf contol project follow this microsoft guide:
+Create and build a code component - Power Apps | Microsoft Learn 
+https://learn.microsoft.com/en-us/power-apps/developer/component-framework/create-custom-controls-using-pcf
+
+To begin building your control use this example guide for understanding:
+Create your first component using Power Apps Component Framework in Microsoft Dataverse - Power Apps | Microsoft Learn 
+https://learn.microsoft.com/en-us/power-apps/developer/component-framework/implementing-controls-using-typescript?tabs=after#add-type-group-element
+
+To debug the UI without uploading to dynamics use this guide:
+Debug code components - Power Apps | Microsoft Learn 
+https://learn.microsoft.com/en-us/power-apps/developer/component-framework/debugging-custom-controls
+
+Relevant pac commands:
+Microsoft Power Platform CLI solution command group - Power Platform | Microsoft Learn 
+https://learn.microsoft.com/en-us/power-platform/developer/cli/reference/solution#pac-solution-init
+
+Deploy af PCF
+Opret solution (pac solution init -pn "KL" -pp "kl")
+
+Tilføj ref til PCF (pac solution add-reference --path ./..)
+
+Ændre proj file med Both i PropertyGroup
+
+Byg i release (dotnet build -c Release)
+
+Import til dev (pac solution import --path ./bin/Release/solution.zip -f -pc)
+
+The publisher name and prefix for KL is the following:
+pac solution init --publisher-name kemplauritzenas --publisher-prefix kl
+
+So the usual flow:
+
+Make TypeScript changes → npm run build (success)
+Build the solution → dotnet build <your>.cdsproj to generate updated solution package (.zip)
+Import that .zip into Dynamics to see the changes live.
+So, every time you update your PCF control for import:
+
+Update the control.manifest.xml version (e.g., 1.0.1).
+Update the package.json version to match (1.0.1).
+Clean & rebuild the project.
